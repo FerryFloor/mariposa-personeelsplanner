@@ -485,9 +485,13 @@ function navigateTo(pageId) {
     button.classList.toggle("active",button.dataset.page === pageId);
   });
 
-  if (pageId === "rosterPage") {
-    loadRoster();
-  }
+ if (pageId === "rosterPage") {
+  loadRoster();
+}
+
+if (pageId === "availabilityPage") {
+  loadAvailability();
+}
 }
 
 document.querySelectorAll("[data-page]").forEach(button => {
