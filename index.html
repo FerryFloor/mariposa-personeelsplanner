@@ -1,1 +1,333 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mariposa Personeelsplanner</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --purple: #76558c;
+      --dark-purple: #49345e;
+      --pink: #f4dce9;
+      --yellow: #fff0b8;
+      --green: #dcebdc;
+      --background: #faf7fb;
+      --text: #393342;
+    }
 
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      color: var(--text);
+      background: var(--background);
+    }
+
+    .top {
+      background: white;
+      padding: 22px;
+      border-bottom: 1px solid #eee7f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 21px;
+      font-weight: bold;
+      color: var(--dark-purple);
+    }
+
+    .butterfly { font-size: 32px; }
+
+    .page {
+      max-width: 1000px;
+      margin: 45px auto;
+      padding: 20px;
+    }
+
+    .login-card, .welcome-card, .feature {
+      background: white;
+      border-radius: 18px;
+      padding: 30px;
+      box-shadow: 0 5px 22px rgba(60, 40, 70, .06);
+    }
+
+    .login-card {
+      max-width: 430px;
+      margin: 35px auto;
+    }
+
+    h1, h2 { color: var(--dark-purple); }
+
+    h1 { font-size: 27px; margin-top: 0; }
+
+    p { line-height: 1.6; }
+
+    label {
+      display: block;
+      margin: 18px 0 7px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #ddd3e3;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 13px 20px;
+      background: var(--purple);
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover { background: var(--dark-purple); }
+
+    button:disabled { opacity: .6; cursor: wait; }
+
+    .login-button { width: 100%; margin-top: 24px; }
+
+    .message {
+      margin-top: 16px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .error { color: #b42318; }
+    .success { color: #26734d; }
+
+    .hidden { display: none !important; }
+
+    .welcome-card {
+      background: linear-gradient(120deg, var(--pink), var(--yellow));
+      margin-bottom: 24px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+
+    .feature { min-height: 150px; }
+
+    .feature-icon { font-size: 30px; }
+
+    .muted { color: #766e7c; font-size: 14px; }
+
+    .logout { background: #eee8f1; color: var(--dark-purple); }
+
+    .logout:hover { background: #e1d6e8; }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #8b8290;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="top">
+    <div class="brand">
+      <span class="butterfly">🦋</span>
+      <span>Mariposa Personeelsplanner</span>
+    </div>
+    <button id="logoutButton" class="logout hidden">Uitloggen</button>
+  </header>
+
+  <main class="page">
+
+    <section id="loginSection" class="login-card">
+      <h1>Welkom bij Mariposa 💜</h1>
+      <p>Log in om de personeelsplanning van het team te bekijken.</p>
+
+      <form id="loginForm">
+        <label for="email">E-mailadres</label>
+        <input id="email" type="email" placeholder="jouw e-mailadres" required>
+
+        <label for="password">Wachtwoord</label>
+        <input id="password" type="password" placeholder="jouw wachtwoord" required>
+
+        <button id="loginButton" class="login-button" type="submit">
+          Inloggen
+        </button>
+      </form>
+
+      <div id="loginMessage" class="message" role="status"></div>
+    </section>
+
+    <section id="dashboardSection" class="hidden">
+      <div class="welcome-card">
+        <h1>Welkom, <span id="userName">collega</span>! 🦋</h1>
+        <p id="roleText">Je bent ingelogd bij Mariposa Personeelsplanner.</p>
+      </div>
+
+      <div class="features">
+        <div class="feature">
+          <div class="feature-icon">📅</div>
+          <h2>Maandplanning</h2>
+          <p class="muted">Hier komt straks het rooster van het hele team.</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">🌴</div>
+          <h2>Vrije dagen</h2>
+          <p class="muted">Hier kun je straks vrije dagen en vakanties aanvragen.</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">🔄</div>
+          <h2>Diensten ruilen</h2>
+          <p class="muted">Hier kun je straks een dienstruil aanvragen.</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">👥</div>
+          <h2>Ons team</h2>
+          <p class="muted">De personeelsplanner voor het hele Mariposa-team.</p>
+        </div>
+      </div>
+
+      <p id="dashboardMessage" class="message"></p>
+    </section>
+
+  </main>
+
+  <footer>Mariposa Personeelsplanner · Samen zorgen we voor een fijne planning</footer>
+
+  <script>
+    const SUPABASE_URL = "https://tcgbfzlggkamfpzonhdb.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_qjpyUHIcYspG-rWaSVSr5w_mVI5UGge";
+
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+    const loginSection = document.getElementById("loginSection");
+    const dashboardSection = document.getElementById("dashboardSection");
+    const loginForm = document.getElementById("loginForm");
+    const loginButton = document.getElementById("loginButton");
+    const loginMessage = document.getElementById("loginMessage");
+    const logoutButton = document.getElementById("logoutButton");
+
+    function showLogin(message = "") {
+      loginSection.classList.remove("hidden");
+      dashboardSection.classList.add("hidden");
+      logoutButton.classList.add("hidden");
+      loginMessage.textContent = message;
+      loginMessage.className = "message error";
+    }
+
+    function showError(message) {
+      loginMessage.textContent = message;
+      loginMessage.className = "message error";
+    }
+
+    async function showDashboard(user) {
+      loginSection.classList.add("hidden");
+      dashboardSection.classList.remove("hidden");
+      logoutButton.classList.remove("hidden");
+
+      const nameElement = document.getElementById("userName");
+      const roleElement = document.getElementById("roleText");
+      const dashboardMessage = document.getElementById("dashboardMessage");
+
+      nameElement.textContent = user.email || "collega";
+      roleElement.textContent = "Je bent ingelogd bij Mariposa Personeelsplanner.";
+      dashboardMessage.textContent = "";
+
+      const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("full_name, role, active")
+        .eq("id", user.id)
+        .single();
+
+      if (error || !profile) {
+        dashboardMessage.textContent =
+          "Je account is ingelogd, maar het teamprofiel kon niet worden opgehaald. Neem contact op met de beheerder.";
+        dashboardMessage.className = "message error";
+        return;
+      }
+
+      if (!profile.active) {
+        await supabaseClient.auth.signOut();
+        showLogin("Dit account is niet actief. Neem contact op met de planner.");
+        return;
+      }
+
+      nameElement.textContent = profile.full_name || user.email;
+
+      if (profile.role === "planner") {
+        roleElement.textContent = "Je bent ingelogd als planner. Je kunt straks de personeelsplanning beheren.";
+      } else {
+        roleElement.textContent = "Je bent ingelogd als medewerker. Welkom bij het team!";
+      }
+    }
+
+    loginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      loginButton.disabled = true;
+      loginButton.textContent = "Even geduld...";
+      loginMessage.textContent = "";
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      loginButton.disabled = false;
+      loginButton.textContent = "Inloggen";
+
+      if (error) {
+        showError("Inloggen is niet gelukt. Controleer je e-mailadres en wachtwoord.");
+        return;
+      }
+
+      await showDashboard(data.user);
+    });
+
+    logoutButton.addEventListener("click", async () => {
+      await supabaseClient.auth.signOut();
+      showLogin("Je bent uitgelogd.");
+    });
+
+    async function checkExistingLogin() {
+      const { data } = await supabaseClient.auth.getSession();
+
+      if (data.session) {
+        await showDashboard(data.session.user);
+      }
+    }
+
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_OUT" || !session) {
+        showLogin();
+      }
+    });
+
+    checkExistingLogin();
+  </script>
+</body>
+</html>
