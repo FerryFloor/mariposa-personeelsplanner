@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -5,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mariposa Personeelsplanner</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
 :root {
   --purple:#76558c;
@@ -25,11 +25,13 @@ body {
 }
 header {
   background:white;
-  padding:18px 24px;
+  padding:16px 24px;
   display:flex;
   justify-content:space-between;
   align-items:center;
   border-bottom:1px solid #eee7f0;
+  gap:12px;
+  flex-wrap:wrap;
 }
 .brand {
   font-size:21px;
@@ -47,8 +49,11 @@ button {
   cursor:pointer;
 }
 button:disabled {opacity:.5;cursor:wait}
-.logout {background:#eee8f1;color:var(--dark)}
-main {max-width:1500px;margin:30px auto;padding:18px}
+.logout,.secondary {
+  background:#eee8f1;
+  color:var(--dark);
+}
+main {max-width:1500px;margin:25px auto;padding:18px}
 .hidden {display:none!important}
 .card {
   background:white;
@@ -57,7 +62,7 @@ main {max-width:1500px;margin:30px auto;padding:18px}
   box-shadow:0 5px 22px #39254a0d;
   margin-bottom:22px;
 }
-h1,h2 {color:var(--dark)}
+h1,h2,h3 {color:var(--dark)}
 h1 {margin-top:0}
 input {
   width:100%;
@@ -74,6 +79,54 @@ label {display:block;margin:16px 0 7px;font-weight:bold}
 .success {color:#26734d}
 .welcome {
   background:linear-gradient(120deg,var(--pink),var(--yellow));
+}
+.welcome h1 {margin-bottom:8px}
+.navigation {
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
+  margin-bottom:22px;
+}
+.navigation button {
+  background:white;
+  color:var(--dark);
+  border:1px solid #eee7f0;
+}
+.navigation button.active {
+  background:var(--purple);
+  color:white;
+}
+.tiles {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+}
+.tile {
+  border-radius:16px;
+  padding:23px;
+  min-height:155px;
+  cursor:pointer;
+  transition:transform .15s;
+  border:0;
+  color:var(--dark);
+  text-align:left;
+  display:block;
+  width:100%;
+}
+.tile:hover {transform:translateY(-3px)}
+.tile .emoji {font-size:32px;display:block;margin-bottom:12px}
+.tile strong {font-size:18px;display:block;margin-bottom:7px}
+.tile small {font-size:13px;line-height:1.5}
+.tile-pink {background:var(--pink)}
+.tile-yellow {background:var(--yellow)}
+.tile-green {background:var(--green)}
+.tile-purple {background:#e6e0f2}
+.page-heading {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
 }
 .toolbar {
   display:flex;
@@ -155,13 +208,26 @@ th:first-child {background:#eee7f2;z-index:3}
   font-size:12px;
   background:#f1edf4;
 }
-footer {text-align:center;color:#8b8290;padding:25px;font-size:12px}
+.placeholder {
+  background:#faf7fb;
+  border:1px dashed #d9cddd;
+  border-radius:12px;
+  padding:25px;
+  line-height:1.7;
+}
+footer {
+  text-align:center;
+  color:#8b8290;
+  padding:25px;
+  font-size:12px;
+}
 @media(max-width:600px) {
   header {padding:14px}
   .brand {font-size:16px}
   main {padding:10px}
   .card {padding:16px}
   .month h2 {min-width:130px;font-size:18px}
+  .tiles {grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -190,40 +256,127 @@ footer {text-align:center;color:#8b8290;padding:25px;font-size:12px}
 
 <section id="dashboardSection" class="hidden">
 
-  <div class="card welcome">
-    <h1>Welkom, <span id="userName"></span>! 🦋</h1>
-    <p id="roleText"></p>
-  </div>
+  <nav class="navigation">
+    <button class="active" data-page="homePage">🏠 Home</button>
+    <button data-page="rosterPage">📅 Maandplanning</button>
+    <button data-page="availabilityPage">🌴 Beschikbaarheid</button>
+    <button data-page="swapPage">🔄 Diensten ruilen</button>
+    <button data-page="staffPage" id="staffNav">👥 Medewerkers</button>
+  </nav>
 
-  <div class="card">
-    <h1>📅 Maandplanning</h1>
-    <p>Bekijk het rooster van het hele Mariposa-team.</p>
+  <section id="homePage">
+    <div class="card welcome">
+      <h1>Welkom, <span id="userName"></span>! 🦋</h1>
+      <p id="roleText"></p>
+      <p>Fijn dat je er bent. Wat wil je vandaag doen?</p>
+    </div>
 
-    <div class="toolbar">
-      <div class="month">
-        <button id="previousMonth">←</button>
-        <h2 id="monthTitle"></h2>
-        <button id="nextMonth">→</button>
+    <div class="tiles">
+      <button class="tile tile-pink" data-page="rosterPage">
+        <span class="emoji">📅</span>
+        <strong>Maandplanning</strong>
+        <small>Bekijk en bewerk het rooster van het hele team.</small>
+      </button>
+
+      <button class="tile tile-yellow" data-page="availabilityPage">
+        <span class="emoji">🌴</span>
+        <strong>Beschikbaarheid</strong>
+        <small>Geef vrije dagen en vakanties door.</small>
+      </button>
+
+      <button class="tile tile-green" data-page="swapPage">
+        <span class="emoji">🔄</span>
+        <strong>Diensten ruilen</strong>
+        <small>Bekijk en dien verzoeken in om diensten te ruilen.</small>
+      </button>
+
+      <button class="tile tile-purple" data-page="staffPage" id="staffTile">
+        <span class="emoji">👥</span>
+        <strong>Medewerkers</strong>
+        <small>Beheer de medewerkers en de volgorde van het rooster.</small>
+      </button>
+    </div>
+  </section>
+
+  <section id="rosterPage" class="hidden">
+    <div class="card">
+      <div class="page-heading">
+        <h1>📅 Maandplanning</h1>
+        <button class="secondary" data-page="homePage">← Terug naar home</button>
       </div>
-      <button id="refreshButton">Rooster vernieuwen ↻</button>
-    </div>
+      <p>Bekijk het rooster van het hele Mariposa-team.</p>
 
-    <div id="rosterMessage" class="message"></div>
+      <div class="toolbar">
+        <div class="month">
+          <button id="previousMonth">←</button>
+          <h2 id="monthTitle"></h2>
+          <button id="nextMonth">→</button>
+        </div>
+        <button id="refreshButton">Rooster vernieuwen ↻</button>
+      </div>
 
-    <div class="roster-wrap">
-      <table id="rosterTable"></table>
-    </div>
+      <div id="rosterMessage" class="message"></div>
+      <div class="roster-wrap">
+        <table id="rosterTable"></table>
+      </div>
 
-    <div class="legend">
-      <span>MA = Avonddienst</span>
-      <span>MO = Ochtenddienst</span>
-      <span>C = Kantoordienst</span>
-      <span>T = Teamvergadering</span>
-      <span>V = Vakantie</span>
-      <span>A = Ambulant</span>
-      <span>X = Vrije dag</span>
+      <div class="legend">
+        <span>MA = Avonddienst</span>
+        <span>MO = Ochtenddienst</span>
+        <span>C = Kantoordienst</span>
+        <span>T = Teamvergadering</span>
+        <span>V = Vakantie</span>
+        <span>A = Ambulant</span>
+        <span>X = Vrije dag</span>
+      </div>
     </div>
-  </div>
+  </section>
+
+  <section id="availabilityPage" class="hidden">
+    <div class="card">
+      <div class="page-heading">
+        <h1>🌴 Beschikbaarheid</h1>
+        <button class="secondary" data-page="homePage">← Terug naar home</button>
+      </div>
+      <div class="placeholder">
+        <h2>Vrije dagen en vakanties</h2>
+        <p>Hier kunnen medewerkers straks doorgeven wanneer ze niet kunnen werken.</p>
+        <p>De planner kan de verzoeken bekijken en goedkeuren of afwijzen.</p>
+        <p><strong>Deadline:</strong> geef je beschikbaarheid voor de volgende maand uiterlijk op de 15e door.</p>
+        <p>Dit onderdeel bouwen we in de volgende fase echt werkend.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="swapPage" class="hidden">
+    <div class="card">
+      <div class="page-heading">
+        <h1>🔄 Diensten ruilen</h1>
+        <button class="secondary" data-page="homePage">← Terug naar home</button>
+      </div>
+      <div class="placeholder">
+        <h2>Een dienst ruilen</h2>
+        <p>Hier kunnen medewerkers straks een verzoek indienen om een dienst met een collega te ruilen.</p>
+        <p>De planner kan de verzoeken bekijken en goedkeuren of afwijzen.</p>
+        <p>Dit onderdeel bouwen we in de volgende fase echt werkend.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="staffPage" class="hidden">
+    <div class="card">
+      <div class="page-heading">
+        <h1>👥 Medewerkers</h1>
+        <button class="secondary" data-page="homePage">← Terug naar home</button>
+      </div>
+      <div class="placeholder">
+        <h2>Team Mariposa</h2>
+        <p>Hier kan de planner straks medewerkers toevoegen, accounts beheren en de volgorde van het maandrooster bepalen.</p>
+        <p>We voegen de medewerkers pas toe wanneer de rest van de app klaar is.</p>
+        <p>Dit onderdeel bouwen we in de volgende fase echt werkend.</p>
+      </div>
+    </div>
+  </section>
 
 </section>
 </main>
@@ -283,6 +436,35 @@ function escapeHTML(value) {
   })[c]);
 }
 
+function navigateTo(pageId) {
+  const pages = [
+    "homePage","rosterPage","availabilityPage",
+    "swapPage","staffPage"
+  ];
+
+  if (pageId === "staffPage" && !isPlanner) {
+    pageId = "homePage";
+  }
+
+  pages.forEach(id => {
+    document.getElementById(id).classList.toggle("hidden",id !== pageId);
+  });
+
+  document.querySelectorAll(".navigation button").forEach(button => {
+    button.classList.toggle("active",button.dataset.page === pageId);
+  });
+
+  if (pageId === "rosterPage") {
+    loadRoster();
+  }
+}
+
+document.querySelectorAll("[data-page]").forEach(button => {
+  button.addEventListener("click",() => {
+    navigateTo(button.dataset.page);
+  });
+});
+
 async function loadDashboard(user) {
   currentUser = user;
 
@@ -313,11 +495,14 @@ async function loadDashboard(user) {
     ? "Je bent ingelogd als planner. Je kunt diensten in het rooster aanpassen."
     : "Je bent ingelogd als medewerker. Je kunt het volledige teamrooster bekijken.";
 
+  document.getElementById("staffNav").classList.toggle("hidden",!isPlanner);
+  document.getElementById("staffTile").classList.toggle("hidden",!isPlanner);
+
   loginSection.classList.add("hidden");
   dashboardSection.classList.remove("hidden");
   logoutButton.classList.remove("hidden");
 
-  await loadRoster();
+  navigateTo("homePage");
 }
 
 async function loadRoster() {
@@ -396,8 +581,8 @@ function renderRoster() {
       const date = dateString(currentYear,currentMonth,day);
       const shift = shifts[person.id + "_" + date];
       const code = shift ? shift.shift_code : "";
-      const weekend = new Date(currentYear,currentMonth,day).getDay()===0 ||
-                      new Date(currentYear,currentMonth,day).getDay()===6;
+      const weekday = new Date(currentYear,currentMonth,day).getDay();
+      const weekend = weekday===0 || weekday===6;
 
       if (isPlanner) {
         html += `<td class="${weekend ? "weekend" : ""}">
@@ -422,7 +607,7 @@ function renderRoster() {
 
   if (isPlanner) {
     document.querySelectorAll(".shift-select").forEach(select => {
-      select.addEventListener("change", saveShift);
+      select.addEventListener("change",saveShift);
     });
   }
 }
@@ -438,7 +623,6 @@ async function saveShift(event) {
   showMessage("Dienst wordt opgeslagen...");
 
   const existing = shifts[key];
-
   let result;
 
   if (!code && existing) {
@@ -499,13 +683,19 @@ logoutButton.addEventListener("click",async () => {
 
 document.getElementById("previousMonth").addEventListener("click",async () => {
   currentMonth--;
-  if (currentMonth < 0) {currentMonth=11;currentYear--;}
+  if (currentMonth < 0) {
+    currentMonth=11;
+    currentYear--;
+  }
   await loadRoster();
 });
 
 document.getElementById("nextMonth").addEventListener("click",async () => {
   currentMonth++;
-  if (currentMonth > 11) {currentMonth=0;currentYear++;}
+  if (currentMonth > 11) {
+    currentMonth=0;
+    currentYear++;
+  }
   await loadRoster();
 });
 
