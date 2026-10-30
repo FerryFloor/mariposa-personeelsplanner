@@ -686,6 +686,173 @@ async function saveShift(event) {
   showMessage("Dienst opgeslagen! 💜","success");
 }
 
+async function loadAvailability() {
+  if (!currentUser) return;
+
+  const ownList = document.getElementById("myAvailabilityRequests");
+  const teamList = document.getElementById("allAvailabilityRequests");
+
+  document.getElementById("availabilityPlannerSection")
+    .classList.toggle("hidden", !isPlanner);
+
+  ownList.textContent = "Aanvragen worden geladen...";
+  if (isPlanner) teamList.textContent = "Aanvragen worden geladen...";
+
+  let query = db
+    .from("availability_requests")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (!isPlanner) {
+    query = query.eq("employee_id", currentUser.id);
+  }
+
+  const { data: requests, error } = await query;
+
+  if (error) {
+    ownList.textContent = "Fout bij laden: " + error.message;
+    if (isPlanner) teamList.textContent = "Fout bij laden: " + error.message;
+    return;
+  }
+
+  const statusNames = {
+    pending: "In afwachting",
+    approved: "Goedgekeurd",
+    rejected: "Afgewezen"
+  };
+
+  const typeNames = {
+    free_day: "Vrije dag(en)",
+    vacation: "Vakantie"
+  };
+
+  function formatRequest(request, employeeName = "") {
+    const status = statusNames[request.status] || request.status;
+    const type = typeNames[request.request_type] || request.request_type;
+
+    return `
+      <div class="request-card">
+        <h3>${escapeHTML(employeeName || "Mijn aanvraag")}</h3>
+        <p><strong>Soort:</strong> ${escapeHTML(type)}</p>
+        <p><strong>Periode:</strong> ${escapeHTML(request.start_date)} t/m ${escapeHTML(request.end_date)}</p>
+        ${request.note ? `<p><strong>Toelichting:</strong> ${escapeHTML(request.note)}</p>` : ""}
+        <p><strong>Status:</strong> ${escapeHTML(status)}</p>
+        ${isPlanner && request.status === "pending" ? `
+          <button class="secondary" data-request-id="${escapeHTML(request.id)}" data-status="approved">
+            Goedkeuren
+          </button>
+          <button class="secondary" data-request-id="${escapeHTML(request.id)}" data-status="rejected">
+            Afwijzen
+          </button>
+        ` : ""}
+      </div>
+    `;
+  }
+
+  if (!requests || requests.length === 0) {
+    ownList.textContent = "Je hebt nog geen aanvragen ingediend.";
+    if (isPlanner) teamList.textContent = "Er zijn nog geen aanvragen.";
+    return;
+  }
+
+  ownList.innerHTML = requests
+    .filter(request => request.employee_id === currentUser.id)
+    .map(request => formatRequest(request))
+    .join("") || "Je hebt nog geen aanvragen ingediend.";
+
+  if (isPlanner) {
+    const { data: people, error: peopleError } = await db
+      .from("profiles")
+      .select("id, full_name");
+
+    if (peopleError) {
+      teamList.textContent = "Medewerkers konden niet worden geladen: " + peopleError.message;
+      return;
+    }
+
+    const names = {};
+    (people || []).forEach(person => {
+      names[person.id] = person.full_name || "Naam ontbreekt";
+    });
+
+    teamList.innerHTML = requests
+      .map(request => formatRequest(request, names[request.employee_id] || "Onbekende medewerker"))
+      .join("");
+  }
+}
+
+document.getElementById("availabilityForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const message = document.getElementById("availabilityFormMessage");
+  const button = document.getElementById("availabilitySubmit");
+  const startDate = document.getElementById("requestStart").value;
+  const endDate = document.getElementById("requestEnd").value;
+
+  if (!currentUser) {
+    message.textContent = "Je moet eerst inloggen.";
+    return;
+  }
+
+  if (endDate < startDate) {
+    message.textContent = "De einddatum mag niet vóór de begindatum liggen.";
+    message.className = "message error";
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Aanvraag wordt verstuurd...";
+
+  const { error } = await db.from("availability_requests").insert({
+    employee_id: currentUser.id,
+    start_date: startDate,
+    end_date: endDate,
+    request_type: document.getElementById("requestType").value,
+    note: document.getElementById("requestNote").value.trim(),
+    status: "pending"
+  });
+
+  button.disabled = false;
+  button.textContent = "Aanvraag versturen";
+
+  if (error) {
+    message.textContent = "Aanvraag versturen is niet gelukt: " + error.message;
+    message.className = "message error";
+    return;
+  }
+
+  document.getElementById("availabilityForm").reset();
+  message.textContent = "Je aanvraag is verstuurd! 💜";
+  message.className = "message success";
+
+  await loadAvailability();
+});
+
+document.getElementById("allAvailabilityRequests").addEventListener("click", async event => {
+  const button = event.target.closest("button[data-request-id]");
+  if (!button || !isPlanner) return;
+
+  const requestId = button.dataset.requestId;
+  const newStatus = button.dataset.status;
+
+  button.disabled = true;
+  button.textContent = "Bezig...";
+
+  const { error } = await db
+    .from("availability_requests")
+    .update({ status: newStatus })
+    .eq("id", requestId);
+
+  if (error) {
+    document.getElementById("allAvailabilityRequests").innerHTML =
+      `<p class="message error">Status wijzigen is niet gelukt: ${escapeHTML(error.message)}</p>`;
+    await loadAvailability();
+    return;
+  }
+
+  await loadAvailability();
+});
+
 document.getElementById("loginForm").addEventListener("submit",async event => {
   event.preventDefault();
 
