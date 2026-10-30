@@ -1,333 +1,526 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mariposa Personeelsplanner</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    :root {
-      --purple: #76558c;
-      --dark-purple: #49345e;
-      --pink: #f4dce9;
-      --yellow: #fff0b8;
-      --green: #dcebdc;
-      --background: #faf7fb;
-      --text: #393342;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mariposa Personeelsplanner</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Arial, sans-serif;
-      color: var(--text);
-      background: var(--background);
-    }
-
-    .top {
-      background: white;
-      padding: 22px;
-      border-bottom: 1px solid #eee7f0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 21px;
-      font-weight: bold;
-      color: var(--dark-purple);
-    }
-
-    .butterfly { font-size: 32px; }
-
-    .page {
-      max-width: 1000px;
-      margin: 45px auto;
-      padding: 20px;
-    }
-
-    .login-card, .welcome-card, .feature {
-      background: white;
-      border-radius: 18px;
-      padding: 30px;
-      box-shadow: 0 5px 22px rgba(60, 40, 70, .06);
-    }
-
-    .login-card {
-      max-width: 430px;
-      margin: 35px auto;
-    }
-
-    h1, h2 { color: var(--dark-purple); }
-
-    h1 { font-size: 27px; margin-top: 0; }
-
-    p { line-height: 1.6; }
-
-    label {
-      display: block;
-      margin: 18px 0 7px;
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    input {
-      width: 100%;
-      padding: 14px;
-      border: 1px solid #ddd3e3;
-      border-radius: 10px;
-      font-size: 16px;
-    }
-
-    button {
-      border: 0;
-      border-radius: 10px;
-      padding: 13px 20px;
-      background: var(--purple);
-      color: white;
-      font-size: 15px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    button:hover { background: var(--dark-purple); }
-
-    button:disabled { opacity: .6; cursor: wait; }
-
-    .login-button { width: 100%; margin-top: 24px; }
-
-    .message {
-      margin-top: 16px;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .error { color: #b42318; }
-    .success { color: #26734d; }
-
-    .hidden { display: none !important; }
-
-    .welcome-card {
-      background: linear-gradient(120deg, var(--pink), var(--yellow));
-      margin-bottom: 24px;
-    }
-
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 18px;
-    }
-
-    .feature { min-height: 150px; }
-
-    .feature-icon { font-size: 30px; }
-
-    .muted { color: #766e7c; font-size: 14px; }
-
-    .logout { background: #eee8f1; color: var(--dark-purple); }
-
-    .logout:hover { background: #e1d6e8; }
-
-    footer {
-      text-align: center;
-      padding: 30px;
-      color: #8b8290;
-      font-size: 12px;
-    }
-  </style>
+<style>
+:root {
+  --purple:#76558c;
+  --dark:#49345e;
+  --pink:#f4dce9;
+  --yellow:#fff0b8;
+  --green:#dcebdc;
+  --bg:#faf7fb;
+  --text:#393342;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+header {
+  background:white;
+  padding:18px 24px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid #eee7f0;
+}
+.brand {
+  font-size:21px;
+  font-weight:bold;
+  color:var(--dark);
+}
+.brand span {font-size:30px;margin-right:8px}
+button {
+  border:0;
+  border-radius:9px;
+  padding:11px 16px;
+  background:var(--purple);
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+button:disabled {opacity:.5;cursor:wait}
+.logout {background:#eee8f1;color:var(--dark)}
+main {max-width:1500px;margin:30px auto;padding:18px}
+.hidden {display:none!important}
+.card {
+  background:white;
+  padding:25px;
+  border-radius:17px;
+  box-shadow:0 5px 22px #39254a0d;
+  margin-bottom:22px;
+}
+h1,h2 {color:var(--dark)}
+h1 {margin-top:0}
+input {
+  width:100%;
+  padding:13px;
+  border:1px solid #ddd3e3;
+  border-radius:9px;
+  font-size:16px;
+}
+label {display:block;margin:16px 0 7px;font-weight:bold}
+.login {max-width:430px;margin:55px auto}
+.login button {width:100%;margin-top:20px}
+.message {font-size:14px;margin-top:12px}
+.error {color:#b42318}
+.success {color:#26734d}
+.welcome {
+  background:linear-gradient(120deg,var(--pink),var(--yellow));
+}
+.toolbar {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin:18px 0;
+}
+.month {
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.month h2 {margin:0;min-width:170px;text-align:center}
+.roster-wrap {
+  overflow-x:auto;
+  border:1px solid #eee7f0;
+  border-radius:12px;
+}
+table {
+  border-collapse:collapse;
+  width:max-content;
+  min-width:100%;
+  font-size:13px;
+}
+th,td {
+  border:1px solid #eee7f0;
+  padding:7px;
+  text-align:center;
+  min-width:53px;
+}
+th {
+  background:#f4eff7;
+  color:var(--dark);
+  position:sticky;
+  top:0;
+}
+th:first-child,td:first-child {
+  position:sticky;
+  left:0;
+  z-index:2;
+  min-width:155px;
+  text-align:left;
+  background:white;
+  font-weight:bold;
+}
+th:first-child {background:#eee7f2;z-index:3}
+.day-name {font-size:10px;color:#807687;font-weight:normal}
+.weekend {background:#faf5fb}
+.shift-select {
+  width:48px;
+  border:0;
+  border-radius:6px;
+  padding:7px 1px;
+  text-align:center;
+  font-weight:bold;
+  font-size:12px;
+  background:#f1edf4;
+  color:var(--dark);
+}
+.shift-select:disabled {opacity:1;cursor:default}
+.shift-MA {background:#f7dce7}
+.shift-MO {background:#fff0b8}
+.shift-C {background:#dcebdc}
+.shift-T {background:#dce7f6}
+.shift-V {background:#f4dce9}
+.shift-A {background:#e6e0f2}
+.shift-X {background:#eeeeee}
+.legend {
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
+  margin-top:18px;
+}
+.legend span {
+  border-radius:7px;
+  padding:7px 10px;
+  font-size:12px;
+  background:#f1edf4;
+}
+footer {text-align:center;color:#8b8290;padding:25px;font-size:12px}
+@media(max-width:600px) {
+  header {padding:14px}
+  .brand {font-size:16px}
+  main {padding:10px}
+  .card {padding:16px}
+  .month h2 {min-width:130px;font-size:18px}
+}
+</style>
 </head>
 
 <body>
-  <header class="top">
-    <div class="brand">
-      <span class="butterfly">🦋</span>
-      <span>Mariposa Personeelsplanner</span>
+
+<header>
+  <div class="brand"><span>🦋</span>Mariposa Personeelsplanner</div>
+  <button id="logoutButton" class="logout hidden">Uitloggen</button>
+</header>
+
+<main>
+
+<section id="loginSection" class="card login">
+  <h1>Welkom bij Mariposa 💜</h1>
+  <p>Log in om de personeelsplanning te bekijken.</p>
+  <form id="loginForm">
+    <label for="email">E-mailadres</label>
+    <input id="email" type="email" required placeholder="jouw e-mailadres">
+    <label for="password">Wachtwoord</label>
+    <input id="password" type="password" required placeholder="jouw wachtwoord">
+    <button id="loginButton" type="submit">Inloggen</button>
+  </form>
+  <div id="loginMessage" class="message"></div>
+</section>
+
+<section id="dashboardSection" class="hidden">
+
+  <div class="card welcome">
+    <h1>Welkom, <span id="userName"></span>! 🦋</h1>
+    <p id="roleText"></p>
+  </div>
+
+  <div class="card">
+    <h1>📅 Maandplanning</h1>
+    <p>Bekijk het rooster van het hele Mariposa-team.</p>
+
+    <div class="toolbar">
+      <div class="month">
+        <button id="previousMonth">←</button>
+        <h2 id="monthTitle"></h2>
+        <button id="nextMonth">→</button>
+      </div>
+      <button id="refreshButton">Rooster vernieuwen ↻</button>
     </div>
-    <button id="logoutButton" class="logout hidden">Uitloggen</button>
-  </header>
 
-  <main class="page">
+    <div id="rosterMessage" class="message"></div>
 
-    <section id="loginSection" class="login-card">
-      <h1>Welkom bij Mariposa 💜</h1>
-      <p>Log in om de personeelsplanning van het team te bekijken.</p>
+    <div class="roster-wrap">
+      <table id="rosterTable"></table>
+    </div>
 
-      <form id="loginForm">
-        <label for="email">E-mailadres</label>
-        <input id="email" type="email" placeholder="jouw e-mailadres" required>
+    <div class="legend">
+      <span>MA = Avonddienst</span>
+      <span>MO = Ochtenddienst</span>
+      <span>C = Kantoordienst</span>
+      <span>T = Teamvergadering</span>
+      <span>V = Vakantie</span>
+      <span>A = Ambulant</span>
+      <span>X = Vrije dag</span>
+    </div>
+  </div>
 
-        <label for="password">Wachtwoord</label>
-        <input id="password" type="password" placeholder="jouw wachtwoord" required>
+</section>
+</main>
 
-        <button id="loginButton" class="login-button" type="submit">
-          Inloggen
-        </button>
-      </form>
+<footer>Mariposa Personeelsplanner · Samen zorgen we voor een fijne planning 🦋</footer>
 
-      <div id="loginMessage" class="message" role="status"></div>
-    </section>
+<script>
+const SUPABASE_URL = "https://tcgbfzlggkamfpzonhdb.supabase.co";
+const SUPABASE_KEY = "sb_publishable_qjpyUHIcYspG-rWaSVSr5w_mVI5UGge";
 
-    <section id="dashboardSection" class="hidden">
-      <div class="welcome-card">
-        <h1>Welkom, <span id="userName">collega</span>! 🦋</h1>
-        <p id="roleText">Je bent ingelogd bij Mariposa Personeelsplanner.</p>
-      </div>
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-      <div class="features">
-        <div class="feature">
-          <div class="feature-icon">📅</div>
-          <h2>Maandplanning</h2>
-          <p class="muted">Hier komt straks het rooster van het hele team.</p>
-        </div>
+const codes = ["MA","MO","C","T","V","A","X"];
+const monthNames = [
+  "Januari","Februari","Maart","April","Mei","Juni",
+  "Juli","Augustus","September","Oktober","November","December"
+];
+const dayNames = ["zo","ma","di","wo","do","vr","za"];
 
-        <div class="feature">
-          <div class="feature-icon">🌴</div>
-          <h2>Vrije dagen</h2>
-          <p class="muted">Hier kun je straks vrije dagen en vakanties aanvragen.</p>
-        </div>
+let currentUser = null;
+let currentProfile = null;
+let currentMonth = new Date().getMonth();
+let currentYear = new Date().getFullYear();
+let employees = [];
+let shifts = {};
+let isPlanner = false;
 
-        <div class="feature">
-          <div class="feature-icon">🔄</div>
-          <h2>Diensten ruilen</h2>
-          <p class="muted">Hier kun je straks een dienstruil aanvragen.</p>
-        </div>
+const loginSection = document.getElementById("loginSection");
+const dashboardSection = document.getElementById("dashboardSection");
+const loginMessage = document.getElementById("loginMessage");
+const logoutButton = document.getElementById("logoutButton");
+const rosterMessage = document.getElementById("rosterMessage");
 
-        <div class="feature">
-          <div class="feature-icon">👥</div>
-          <h2>Ons team</h2>
-          <p class="muted">De personeelsplanner voor het hele Mariposa-team.</p>
-        </div>
-      </div>
+function showLogin(message="") {
+  loginSection.classList.remove("hidden");
+  dashboardSection.classList.add("hidden");
+  logoutButton.classList.add("hidden");
+  loginMessage.textContent = message;
+  loginMessage.className = "message error";
+}
 
-      <p id="dashboardMessage" class="message"></p>
-    </section>
+function showMessage(message, type="") {
+  rosterMessage.textContent = message;
+  rosterMessage.className = "message " + type;
+}
 
-  </main>
+function dateString(year, month, day) {
+  return year + "-" +
+    String(month + 1).padStart(2,"0") + "-" +
+    String(day).padStart(2,"0");
+}
 
-  <footer>Mariposa Personeelsplanner · Samen zorgen we voor een fijne planning</footer>
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",
+    '"':"&quot;","'":"&#39;"
+  })[c]);
+}
 
-  <script>
-    const SUPABASE_URL = "https://tcgbfzlggkamfpzonhdb.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_qjpyUHIcYspG-rWaSVSr5w_mVI5UGge";
+async function loadDashboard(user) {
+  currentUser = user;
 
-    const supabaseClient = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
+  const {data: profile, error} = await db
+    .from("profiles")
+    .select("full_name, role, active")
+    .eq("id", user.id)
+    .single();
 
-    const loginSection = document.getElementById("loginSection");
-    const dashboardSection = document.getElementById("dashboardSection");
-    const loginForm = document.getElementById("loginForm");
-    const loginButton = document.getElementById("loginButton");
-    const loginMessage = document.getElementById("loginMessage");
-    const logoutButton = document.getElementById("logoutButton");
+  if (error || !profile) {
+    showLogin("Je profiel kon niet worden gevonden. Neem contact op met de planner.");
+    return;
+  }
 
-    function showLogin(message = "") {
-      loginSection.classList.remove("hidden");
-      dashboardSection.classList.add("hidden");
-      logoutButton.classList.add("hidden");
-      loginMessage.textContent = message;
-      loginMessage.className = "message error";
-    }
+  if (!profile.active) {
+    await db.auth.signOut();
+    showLogin("Dit account is niet actief.");
+    return;
+  }
 
-    function showError(message) {
-      loginMessage.textContent = message;
-      loginMessage.className = "message error";
-    }
+  currentProfile = profile;
+  isPlanner = profile.role === "planner";
 
-    async function showDashboard(user) {
-      loginSection.classList.add("hidden");
-      dashboardSection.classList.remove("hidden");
-      logoutButton.classList.remove("hidden");
+  document.getElementById("userName").textContent =
+    profile.full_name || user.email;
 
-      const nameElement = document.getElementById("userName");
-      const roleElement = document.getElementById("roleText");
-      const dashboardMessage = document.getElementById("dashboardMessage");
+  document.getElementById("roleText").textContent = isPlanner
+    ? "Je bent ingelogd als planner. Je kunt diensten in het rooster aanpassen."
+    : "Je bent ingelogd als medewerker. Je kunt het volledige teamrooster bekijken.";
 
-      nameElement.textContent = user.email || "collega";
-      roleElement.textContent = "Je bent ingelogd bij Mariposa Personeelsplanner.";
-      dashboardMessage.textContent = "";
+  loginSection.classList.add("hidden");
+  dashboardSection.classList.remove("hidden");
+  logoutButton.classList.remove("hidden");
 
-      const { data: profile, error } = await supabaseClient
-        .from("profiles")
-        .select("full_name, role, active")
-        .eq("id", user.id)
-        .single();
+  await loadRoster();
+}
 
-      if (error || !profile) {
-        dashboardMessage.textContent =
-          "Je account is ingelogd, maar het teamprofiel kon niet worden opgehaald. Neem contact op met de beheerder.";
-        dashboardMessage.className = "message error";
-        return;
-      }
+async function loadRoster() {
+  showMessage("Rooster wordt geladen...");
 
-      if (!profile.active) {
-        await supabaseClient.auth.signOut();
-        showLogin("Dit account is niet actief. Neem contact op met de planner.");
-        return;
-      }
+  const firstDate = dateString(currentYear,currentMonth,1);
+  const lastDate = dateString(
+    currentYear,currentMonth,
+    new Date(currentYear,currentMonth+1,0).getDate()
+  );
 
-      nameElement.textContent = profile.full_name || user.email;
+  const {data: people, error: peopleError} = await db
+    .from("profiles")
+    .select("id, full_name, role, sort_order")
+    .eq("active",true)
+    .order("sort_order",{ascending:true})
+    .order("full_name",{ascending:true});
 
-      if (profile.role === "planner") {
-        roleElement.textContent = "Je bent ingelogd als planner. Je kunt straks de personeelsplanning beheren.";
+  if (peopleError) {
+    showMessage("Medewerkers konden niet worden geladen: " + peopleError.message,"error");
+    return;
+  }
+
+  employees = people || [];
+
+  const {data: monthShifts, error: shiftsError} = await db
+    .from("shifts")
+    .select("id, employee_id, shift_date, shift_code")
+    .gte("shift_date",firstDate)
+    .lte("shift_date",lastDate);
+
+  if (shiftsError) {
+    showMessage("Diensten konden niet worden geladen: " + shiftsError.message,"error");
+    return;
+  }
+
+  shifts = {};
+  (monthShifts || []).forEach(shift => {
+    shifts[shift.employee_id + "_" + shift.shift_date] = shift;
+  });
+
+  renderRoster();
+  showMessage(
+    isPlanner
+      ? "Je kunt diensten aanpassen door een code te kiezen."
+      : "Je bekijkt het rooster. Alleen de planner kan wijzigingen aanbrengen.",
+    "success"
+  );
+}
+
+function renderRoster() {
+  document.getElementById("monthTitle").textContent =
+    monthNames[currentMonth] + " " + currentYear;
+
+  const daysInMonth = new Date(currentYear,currentMonth+1,0).getDate();
+  let html = "<thead><tr><th>Medewerker</th>";
+
+  for (let day=1; day<=daysInMonth; day++) {
+    const date = new Date(currentYear,currentMonth,day);
+    const weekend = date.getDay()===0 || date.getDay()===6;
+    html += `<th class="${weekend ? "weekend" : ""}">
+      ${day}<br><span class="day-name">${dayNames[date.getDay()]}</span>
+    </th>`;
+  }
+
+  html += "</tr></thead><tbody>";
+
+  if (!employees.length) {
+    html += `<tr><td colspan="${daysInMonth+1}">Er zijn nog geen medewerkers toegevoegd.</td></tr>`;
+  }
+
+  employees.forEach(person => {
+    html += `<tr><td>${escapeHTML(person.full_name || "Naam ontbreekt")}</td>`;
+
+    for (let day=1; day<=daysInMonth; day++) {
+      const date = dateString(currentYear,currentMonth,day);
+      const shift = shifts[person.id + "_" + date];
+      const code = shift ? shift.shift_code : "";
+      const weekend = new Date(currentYear,currentMonth,day).getDay()===0 ||
+                      new Date(currentYear,currentMonth,day).getDay()===6;
+
+      if (isPlanner) {
+        html += `<td class="${weekend ? "weekend" : ""}">
+          <select class="shift-select ${code ? "shift-"+code : ""}"
+            data-employee="${person.id}" data-date="${date}">
+            <option value="" ${!code ? "selected" : ""}>-</option>
+            ${codes.map(c => `<option value="${c}" ${code===c ? "selected" : ""}>${c}</option>`).join("")}
+          </select>
+        </td>`;
       } else {
-        roleElement.textContent = "Je bent ingelogd als medewerker. Welkom bij het team!";
+        html += `<td class="${weekend ? "weekend" : ""}">
+          <span class="shift-select ${code ? "shift-"+code : ""}">${code || "-"}</span>
+        </td>`;
       }
     }
 
-    loginForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
+    html += "</tr>";
+  });
 
-      loginButton.disabled = true;
-      loginButton.textContent = "Even geduld...";
-      loginMessage.textContent = "";
+  html += "</tbody>";
+  document.getElementById("rosterTable").innerHTML = html;
 
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-
-      const { data, error } = await supabaseClient.auth.signInWithPassword({
-        email,
-        password
-      });
-
-      loginButton.disabled = false;
-      loginButton.textContent = "Inloggen";
-
-      if (error) {
-        showError("Inloggen is niet gelukt. Controleer je e-mailadres en wachtwoord.");
-        return;
-      }
-
-      await showDashboard(data.user);
+  if (isPlanner) {
+    document.querySelectorAll(".shift-select").forEach(select => {
+      select.addEventListener("change", saveShift);
     });
+  }
+}
 
-    logoutButton.addEventListener("click", async () => {
-      await supabaseClient.auth.signOut();
-      showLogin("Je bent uitgelogd.");
+async function saveShift(event) {
+  const select = event.target;
+  const employeeId = select.dataset.employee;
+  const date = select.dataset.date;
+  const code = select.value;
+  const key = employeeId + "_" + date;
+
+  select.disabled = true;
+  showMessage("Dienst wordt opgeslagen...");
+
+  const existing = shifts[key];
+
+  let result;
+
+  if (!code && existing) {
+    result = await db.from("shifts").delete().eq("id",existing.id);
+  } else if (code && existing) {
+    result = await db.from("shifts")
+      .update({shift_code:code})
+      .eq("id",existing.id);
+  } else if (code) {
+    result = await db.from("shifts").insert({
+      employee_id:employeeId,
+      shift_date:date,
+      shift_code:code
     });
+  }
 
-    async function checkExistingLogin() {
-      const { data } = await supabaseClient.auth.getSession();
+  select.disabled = false;
 
-      if (data.session) {
-        await showDashboard(data.session.user);
-      }
-    }
+  if (result && result.error) {
+    showMessage("Opslaan is niet gelukt: " + result.error.message,"error");
+    await loadRoster();
+    return;
+  }
 
-    supabaseClient.auth.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_OUT" || !session) {
-        showLogin();
-      }
-    });
+  await loadRoster();
+  showMessage("Dienst opgeslagen! 💜","success");
+}
 
-    checkExistingLogin();
-  </script>
+document.getElementById("loginForm").addEventListener("submit",async event => {
+  event.preventDefault();
+
+  const button = document.getElementById("loginButton");
+  button.disabled = true;
+  button.textContent = "Even geduld...";
+
+  const {data,error} = await db.auth.signInWithPassword({
+    email:document.getElementById("email").value.trim(),
+    password:document.getElementById("password").value
+  });
+
+  button.disabled = false;
+  button.textContent = "Inloggen";
+
+  if (error) {
+    loginMessage.textContent = "Inloggen is niet gelukt. Controleer je gegevens.";
+    loginMessage.className = "message error";
+    return;
+  }
+
+  await loadDashboard(data.user);
+});
+
+logoutButton.addEventListener("click",async () => {
+  await db.auth.signOut();
+  currentUser = null;
+  showLogin("Je bent uitgelogd.");
+});
+
+document.getElementById("previousMonth").addEventListener("click",async () => {
+  currentMonth--;
+  if (currentMonth < 0) {currentMonth=11;currentYear--;}
+  await loadRoster();
+});
+
+document.getElementById("nextMonth").addEventListener("click",async () => {
+  currentMonth++;
+  if (currentMonth > 11) {currentMonth=0;currentYear++;}
+  await loadRoster();
+});
+
+document.getElementById("refreshButton").addEventListener("click",loadRoster);
+
+async function checkSession() {
+  const {data} = await db.auth.getSession();
+  if (data.session) await loadDashboard(data.session.user);
+}
+
+checkSession();
+
+db.auth.onAuthStateChange((event,session) => {
+  if (event === "SIGNED_OUT") showLogin();
+});
+</script>
 </body>
 </html>
