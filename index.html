@@ -332,21 +332,52 @@ footer {
     </div>
   </section>
 
-  <section id="availabilityPage" class="hidden">
-    <div class="card">
-      <div class="page-heading">
-        <h1>🌴 Beschikbaarheid</h1>
-        <button class="secondary" data-page="homePage">← Terug naar home</button>
-      </div>
-      <div class="placeholder">
-        <h2>Vrije dagen en vakanties</h2>
-        <p>Hier kunnen medewerkers straks doorgeven wanneer ze niet kunnen werken.</p>
-        <p>De planner kan de verzoeken bekijken en goedkeuren of afwijzen.</p>
-        <p><strong>Deadline:</strong> geef je beschikbaarheid voor de volgende maand uiterlijk op de 15e door.</p>
-        <p>Dit onderdeel bouwen we in de volgende fase echt werkend.</p>
-      </div>
+ 
+<section id="availabilityPage" class="hidden">
+  <div class="card">
+    <div class="page-heading">
+      <h1>🌴 Beschikbaarheid</h1>
+      <button class="secondary" data-page="homePage">← Terug naar home</button>
     </div>
-  </section>
+
+    <div class="placeholder">
+      <h2>📅 Geef je beschikbaarheid door</h2>
+      <p>Geef uiterlijk de 15e van iedere maand je vrije dagen en vakanties voor de volgende maand door.</p>
+    </div>
+
+    <div id="availabilityEmployeeSection">
+      <h2>Nieuwe aanvraag</h2>
+      <form id="availabilityForm">
+        <label for="requestType">Wat wil je aanvragen?</label>
+        <select id="requestType" required>
+          <option value="free_day">Vrije dag(en)</option>
+          <option value="vacation">Vakantie</option>
+        </select>
+
+        <label for="requestStart">Vanaf</label>
+        <input id="requestStart" type="date" required>
+
+        <label for="requestEnd">Tot en met</label>
+        <input id="requestEnd" type="date" required>
+
+        <label for="requestNote">Toelichting (optioneel)</label>
+        <input id="requestNote" type="text" maxlength="500" placeholder="Bijvoorbeeld: familiefeest">
+
+        <button id="availabilitySubmit" type="submit">Aanvraag versturen</button>
+      </form>
+      <div id="availabilityFormMessage" class="message"></div>
+
+      <h2>Mijn aanvragen</h2>
+      <div id="myAvailabilityRequests">Aanvragen worden geladen...</div>
+    </div>
+
+    <div id="availabilityPlannerSection" class="hidden">
+      <h2>Ingediende aanvragen van het team</h2>
+      <div id="allAvailabilityRequests">Aanvragen worden geladen...</div>
+    </div>
+  </div>
+</section>
+
 
   <section id="swapPage" class="hidden">
     <div class="card">
