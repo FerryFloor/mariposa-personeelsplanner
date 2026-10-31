@@ -1022,9 +1022,6 @@ async function checkSession() {
   }
 }
 
-checkSession();
-
-
 db.auth.onAuthStateChange((event, session) => {
   if (event === "SIGNED_OUT") {
     showLogin();
@@ -1041,7 +1038,7 @@ db.auth.onAuthStateChange((event, session) => {
 
     window.history.replaceState({}, document.title, window.location.pathname);
   }
-});
+});checkSession();
 
 // Controleer ook of de herstel-link al verwerkt is
 if (window.location.hash.includes("type=recovery")) {
