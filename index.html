@@ -933,6 +933,74 @@ document.getElementById("nextMonth").addEventListener("click",async () => {
 
 document.getElementById("refreshButton").addEventListener("click",loadRoster);
 
+document.getElementById("forgotPasswordButton").addEventListener("click", async () => {
+  const email = document.getElementById("email").value.trim();
+  const message = document.getElementById("recoveryMessage");
+
+  if (!email) {
+    message.textContent = "Vul eerst je e-mailadres in.";
+    message.className = "message error";
+    return;
+  }
+
+  message.textContent = "Herstelmail wordt verstuurd...";
+
+  const { error } = await db.auth.resetPasswordForEmail(email, {
+    redirectTo: "https://ferryfloor.github.io/mariposa-personeelsplanner/"
+  });
+
+  if (error) {
+    message.textContent = "Versturen mislukt: " + error.message;
+    message.className = "message error";
+  } else {
+    message.textContent = "Er is een herstelmail verstuurd. Controleer je inbox.";
+    message.className = "message success";
+  }
+});
+
+document.getElementById("passwordRecoveryForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const password = document.getElementById("newPassword").value;
+  const confirmation = document.getElementById("confirmPassword").value;
+  const message = document.getElementById("passwordUpdateMessage");
+  const button = document.getElementById("savePasswordButton");
+
+  if (password.length < 8) {
+    message.textContent = "Gebruik minimaal 8 tekens.";
+    message.className = "message error";
+    return;
+  }
+
+  if (password !== confirmation) {
+    message.textContent = "De wachtwoorden zijn niet hetzelfde.";
+    message.className = "message error";
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Wachtwoord opslaan...";
+
+  const { error } = await db.auth.updateUser({ password });
+
+  button.disabled = false;
+  button.textContent = "Wachtwoord opslaan";
+
+  if (error) {
+    message.textContent = "Opslaan mislukt: " + error.message;
+    message.className = "message error";
+    return;
+  }
+
+  message.textContent = "Je wachtwoord is opgeslagen! Je kunt nu inloggen. 💜";
+  message.className = "message success";
+
+  document.getElementById("passwordRecoveryForm").classList.add("hidden");
+  document.getElementById("loginForm").classList.remove("hidden");
+  document.getElementById("forgotPasswordButton").classList.remove("hidden");
+  document.getElementById("passwordRecoverySection").classList.add("hidden");
+});
+
 async function checkSession() {
   const {data} = await db.auth.getSession();
   if (data.session) await loadDashboard(data.session.user);
