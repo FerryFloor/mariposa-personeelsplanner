@@ -241,18 +241,48 @@ footer {
 
 <main>
 
+
 <section id="loginSection" class="card login">
   <h1>Welkom bij Mariposa 💜</h1>
   <p>Log in om de personeelsplanning te bekijken.</p>
+
   <form id="loginForm">
     <label for="email">E-mailadres</label>
     <input id="email" type="email" required placeholder="jouw e-mailadres">
+
     <label for="password">Wachtwoord</label>
     <input id="password" type="password" required placeholder="jouw wachtwoord">
+
     <button id="loginButton" type="submit">Inloggen</button>
   </form>
+
+  <button type="button" class="secondary" id="forgotPasswordButton">
+    Wachtwoord vergeten?
+  </button>
+
   <div id="loginMessage" class="message"></div>
+  <div id="recoveryMessage" class="message"></div>
+
+  <div id="passwordRecoverySection" class="hidden">
+    <h2>Nieuw wachtwoord instellen 🔐</h2>
+    <p>Kies hieronder je nieuwe wachtwoord.</p>
+
+    <form id="passwordRecoveryForm">
+      <label for="newPassword">Nieuw wachtwoord</label>
+      <input id="newPassword" type="password" minlength="8" required>
+
+      <label for="confirmPassword">Herhaal wachtwoord</label>
+      <input id="confirmPassword" type="password" minlength="8" required>
+
+      <button type="submit" id="savePasswordButton">
+        Wachtwoord opslaan
+      </button>
+    </form>
+
+    <div id="passwordUpdateMessage" class="message"></div>
+  </div>
 </section>
+
 
 <section id="dashboardSection" class="hidden">
 
