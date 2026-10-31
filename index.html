@@ -409,20 +409,49 @@ footer {
 </section>
 
 
-  <section id="swapPage" class="hidden">
-    <div class="card">
-      <div class="page-heading">
-        <h1>🔄 Diensten ruilen</h1>
-        <button class="secondary" data-page="homePage">← Terug naar home</button>
-      </div>
-      <div class="placeholder">
-        <h2>Een dienst ruilen</h2>
-        <p>Hier kunnen medewerkers straks een verzoek indienen om een dienst met een collega te ruilen.</p>
-        <p>De planner kan de verzoeken bekijken en goedkeuren of afwijzen.</p>
-        <p>Dit onderdeel bouwen we in de volgende fase echt werkend.</p>
-      </div>
+ <section id="swapPage" class="hidden">
+  <div class="card">
+    <div class="page-heading">
+      <h1>🔄 Diensten ruilen</h1>
+      <button class="secondary" data-page="homePage">← Terug naar home</button>
     </div>
-  </section>
+
+    <h2>Een dienst ruilen</h2>
+    <p>Wil je een dienst ruilen met een collega? Dien hieronder een verzoek in.</p>
+
+    <form id="swapRequestForm">
+      <label for="swapShift">Welke dienst wil je ruilen?</label>
+      <select id="swapShift" required>
+        <option value="">Kies je dienst</option>
+      </select>
+
+      <label for="swapColleague">Met welke collega wil je ruilen?</label>
+      <select id="swapColleague" required>
+        <option value="">Kies een collega</option>
+      </select>
+
+      <label for="swapMessage">Toelichting (optioneel)</label>
+      <textarea id="swapMessage" rows="3" placeholder="Bijvoorbeeld: ik kan deze dag niet werken."></textarea>
+
+      <button type="submit">Ruilverzoek indienen</button>
+    </form>
+
+    <div id="swapMessageResult" class="message"></div>
+
+    <hr>
+
+    <h2>Mijn ruilverzoeken</h2>
+    <div id="mySwapRequests">
+      <p>Je ruilverzoeken verschijnen hier.</p>
+    </div>
+
+    <div id="teamSwapRequests" class="hidden">
+      <hr>
+      <h2>Ruilverzoeken van het team</h2>
+      <div id="allSwapRequests"></div>
+    </div>
+  </div>
+</section>
 
   <section id="staffPage" class="hidden">
     <div class="card">
