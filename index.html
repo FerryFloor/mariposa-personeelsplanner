@@ -551,6 +551,9 @@ function navigateTo(pageId) {
 if (pageId === "availabilityPage") {
   loadAvailability();
 }
+  if (pageId === "swapPage") {
+  loadSwapPage();
+}
 }
 
 document.querySelectorAll("[data-page]").forEach(button => {
