@@ -1008,9 +1008,23 @@ async function checkSession() {
 
 checkSession();
 
-db.auth.onAuthStateChange((event,session) => {
-  if (event === "SIGNED_OUT") showLogin();
+
+db.auth.onAuthStateChange((event, session) => {
+  if (event === "SIGNED_OUT") {
+    showLogin();
+  }
+
+  if (event === "PASSWORD_RECOVERY") {
+    loginSection.classList.remove("hidden");
+    dashboardSection.classList.add("hidden");
+    logoutButton.classList.add("hidden");
+
+    document.getElementById("loginForm").classList.add("hidden");
+    document.getElementById("forgotPasswordButton").classList.add("hidden");
+    document.getElementById("passwordRecoverySection").classList.remove("hidden");
+  }
 });
+
 </script>
 </body>
 </html>
