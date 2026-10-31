@@ -1001,47 +1001,9 @@ document.getElementById("passwordRecoveryForm").addEventListener("submit", async
   document.getElementById("passwordRecoverySection").classList.add("hidden");
 });
 
-async function checkSession() {
-  const { data } = await db.auth.getSession();
+let isPasswordRecovery = window.location.hash.includes("type=recovery");
 
-  const isPasswordRecovery =
-    window.location.hash.includes("type=recovery");
-
-  if (data.session && !isPasswordRecovery) {
-    await loadDashboard(data.session.user);
-  }
-
-  if (isPasswordRecovery) {
-    loginSection.classList.remove("hidden");
-    dashboardSection.classList.add("hidden");
-    logoutButton.classList.add("hidden");
-
-    document.getElementById("loginForm").classList.add("hidden");
-    document.getElementById("forgotPasswordButton").classList.add("hidden");
-    document.getElementById("passwordRecoverySection").classList.remove("hidden");
-  }
-}
-
-db.auth.onAuthStateChange((event, session) => {
-  if (event === "SIGNED_OUT") {
-    showLogin();
-  }
-
-  if (event === "PASSWORD_RECOVERY") {
-    loginSection.classList.remove("hidden");
-    dashboardSection.classList.add("hidden");
-    logoutButton.classList.add("hidden");
-
-    document.getElementById("loginForm").classList.add("hidden");
-    document.getElementById("forgotPasswordButton").classList.add("hidden");
-    document.getElementById("passwordRecoverySection").classList.remove("hidden");
-
-    window.history.replaceState({}, document.title, window.location.pathname);
-  }
-});checkSession();
-
-// Controleer ook of de herstel-link al verwerkt is
-if (window.location.hash.includes("type=recovery")) {
+function showPasswordRecovery() {
   loginSection.classList.remove("hidden");
   dashboardSection.classList.add("hidden");
   logoutButton.classList.add("hidden");
@@ -1051,6 +1013,31 @@ if (window.location.hash.includes("type=recovery")) {
   document.getElementById("passwordRecoverySection").classList.remove("hidden");
 }
 
+async function checkSession() {
+  const { data } = await db.auth.getSession();
+
+  if (isPasswordRecovery) {
+    showPasswordRecovery();
+    return;
+  }
+
+  if (data.session) {
+    await loadDashboard(data.session.user);
+  }
+}
+
+db.auth.onAuthStateChange((event, session) => {
+  if (event === "SIGNED_OUT") {
+    showLogin();
+  }
+
+  if (event === "PASSWORD_RECOVERY") {
+    isPasswordRecovery = true;
+    showPasswordRecovery();
+  }
+});
+
+checkSession();
 </script>
 </body>
 </html>
