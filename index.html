@@ -447,7 +447,7 @@ footer {
 <script>
 const SUPABASE_URL = "https://tcgbfzlggkamfpzonhdb.supabase.co";
 const SUPABASE_KEY = "sb_publishable_qjpyUHIcYspG-rWaSVSr5w_mVI5UGge";
-
+let isPasswordRecovery = window.location.hash.includes("type=recovery");
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const codes = ["MA","MO","C","T","V","A","X"];
@@ -1001,7 +1001,7 @@ document.getElementById("passwordRecoveryForm").addEventListener("submit", async
   document.getElementById("passwordRecoverySection").classList.add("hidden");
 });
 
-let isPasswordRecovery = window.location.hash.includes("type=recovery");
+
 
 function showPasswordRecovery() {
   loginSection.classList.remove("hidden");
