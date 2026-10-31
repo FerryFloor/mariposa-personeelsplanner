@@ -1002,8 +1002,24 @@ document.getElementById("passwordRecoveryForm").addEventListener("submit", async
 });
 
 async function checkSession() {
-  const {data} = await db.auth.getSession();
-  if (data.session) await loadDashboard(data.session.user);
+  const { data } = await db.auth.getSession();
+
+  const isPasswordRecovery =
+    window.location.hash.includes("type=recovery");
+
+  if (data.session && !isPasswordRecovery) {
+    await loadDashboard(data.session.user);
+  }
+
+  if (isPasswordRecovery) {
+    loginSection.classList.remove("hidden");
+    dashboardSection.classList.add("hidden");
+    logoutButton.classList.add("hidden");
+
+    document.getElementById("loginForm").classList.add("hidden");
+    document.getElementById("forgotPasswordButton").classList.add("hidden");
+    document.getElementById("passwordRecoverySection").classList.remove("hidden");
+  }
 }
 
 checkSession();
